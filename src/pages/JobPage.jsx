@@ -111,10 +111,29 @@ const JobPage = ({ deleteJob }) => {
   );
 };
 
+// const jobLoader = async ({ params }) => {
+//   const res = await fetch(`/jobs.json/${params.id}`);
+//   const data = await res.json();
+//   return data;
+// };
+
 const jobLoader = async ({ params }) => {
-  const res = await fetch(`/api/jobs/${params.id}`);
+  const res = await fetch("/jobs.json");
+
+  if (!res.ok) {
+    throw new Response("Jobs not found", { status: 404 });
+  }
+
   const data = await res.json();
-  return data;
+
+  // Find the job by ID
+  const job = data.jobs.find((job) => job.id === String(params.id));
+
+  if (!job) {
+    throw new Response("Job not found", { status: 404 });
+  }
+
+  return job;
 };
 
 export { JobPage as default, jobLoader };
